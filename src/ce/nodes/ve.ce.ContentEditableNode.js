@@ -72,8 +72,7 @@ ve.ce.ContentEditableNode.prototype.onSurfaceReadOnly = function ( readOnly ) {
  * @param {boolean} readOnly Surface is read-only
  */
 ve.ce.ContentEditableNode.prototype.setReadOnly = function ( readOnly ) {
-	// Fandom change: Disable spellcheck due to Chromium bug 1271918 (CATS-2155)
-	this.$element.prop( 'spellcheck', false /* !readOnly */ );
+	this.$element.prop( 'spellcheck', !readOnly );
 };
 
 /**
