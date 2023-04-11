@@ -3076,6 +3076,11 @@ ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 		var surface = this,
 			inputType = e.originalEvent ? e.originalEvent.inputType : null;
 
+    if(inputType === 'deleteContentBackward') {
+      this.surfaceObserver.pollOnce();
+      ve.ce.keyDownHandlerFactory.lookup( 'linearDelete' ).static.execute( this, e );
+    }
+
 		// Support: Chrome (Android, Gboard)
 		// Handle IMEs that emit text fragments with a trailing newline on Enter keypress (T312558)
 		if (
