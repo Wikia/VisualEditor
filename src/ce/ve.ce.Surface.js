@@ -58,6 +58,7 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	this.lastNonCollapsedDocumentSelection = new ve.dm.NullSelection();
 	this.middleClickPasting = false;
 	this.middleClickTargetOffset = false;
+	this.deleteContentBackwardSelectionState = null;
 	this.renderLocks = 0;
 	this.dragging = false;
 	this.relocatingSelection = null;
@@ -1932,6 +1933,14 @@ ve.ce.Surface.prototype.cleanupUnicorns = function ( fixupCursor ) {
  * @fires keyup
  */
 ve.ce.Surface.prototype.onDocumentKeyUp = function () {
+	if ( this.deleteContentBackwardSelectionState ) {
+		var range = this.deleteContentBackwardSelectionState.getNativeRange(
+			this.getElementDocument()
+		);
+		this.nativeSelection.removeAllRanges();
+		this.nativeSelection.addRange( range );
+		this.deleteContentBackwardSelectionState = null;
+	}
 	this.emit( 'keyup' );
 };
 
@@ -3129,7 +3138,7 @@ ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 		var surface = this,
 			inputType = e.originalEvent ? e.originalEvent.inputType : null;
 
-		if(inputType === 'deleteContentBackward') {
+		if ( inputType === 'deleteContentBackward' ) {
 			this.surfaceObserver.pollOnce();
 			ve.ce.keyDownHandlerFactory.lookup( 'linearDelete' ).static.execute( this, e );
 		}
@@ -3223,6 +3232,13 @@ ve.ce.Surface.prototype.onDocumentInput = function ( e ) {
 	var surface = this,
 		inputType = e.originalEvent ? e.originalEvent.inputType : null,
 		inputTypeCommands = this.constructor.static.inputTypeCommands;
+
+	if ( inputType === 'deleteContentBackward' || inputType === 'insertCompositionText' ) {
+		this.deleteContentBackwardSelectionState = new ve.SelectionState( this.nativeSelection );
+		setTimeout( function () {
+			surface.deleteContentBackwardSelectionState = null;
+		} );
+	}
 
 	// Special handling of NBSP insertions. T53045
 	// NBSPs are converted to normal spaces in ve.ce.TextState as they can be
