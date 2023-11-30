@@ -2274,7 +2274,19 @@ ve.ce.Surface.prototype.selectAll = function () {
  */
 ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 	if ( this.getSelection().isNativeCursor() ) {
-		const inputType = e.originalEvent ? e.originalEvent.inputType : null;
+		var surface = this,
+			inputType = e.originalEvent ? e.originalEvent.inputType : null;
+
+		var selectionState = new ve.SelectionState( this.nativeSelection );
+
+		// Fixes issue with deleting Carriage Return in Android with GBoard
+		if ( inputType === 'deleteContentBackward' &&
+			selectionState.anchorOffset === 1 &&
+			selectionState.focusOffset === 0
+		) {
+			this.surfaceObserver.pollOnce();
+			ve.ce.keyDownHandlerFactory.lookup( 'linearDelete' ).static.execute( this, e );
+		}
 
 		// Support: Chrome (Android, Gboard)
 		// Handle IMEs that emit text fragments with a trailing newline on Enter keypress (T312558)
