@@ -3138,12 +3138,7 @@ ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 		var surface = this,
 			inputType = e.originalEvent ? e.originalEvent.inputType : null;
 
-		var selectionState = new ve.SelectionState( this.nativeSelection );
-
-		if ( inputType === 'deleteContentBackward' &&
-			selectionState.anchorOffset === 1 &&
-			selectionState.focusOffset === 0
-		) {
+		if ( inputType === 'deleteContentBackward' ) {
 			this.surfaceObserver.pollOnce();
 			ve.ce.keyDownHandlerFactory.lookup( 'linearDelete' ).static.execute( this, e );
 		}
