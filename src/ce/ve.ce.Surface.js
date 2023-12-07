@@ -3140,7 +3140,6 @@ ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 
 		var selectionState = new ve.SelectionState( this.nativeSelection );
 
-		// Fixes issue with deleting Carriage Return in Android with GBoard
 		if ( inputType === 'deleteContentBackward' &&
 			selectionState.anchorOffset === 1 &&
 			selectionState.focusOffset === 0
