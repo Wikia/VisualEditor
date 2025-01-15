@@ -2385,7 +2385,7 @@ ve.ce.Surface.prototype.onDocumentInput = function ( e ) {
 	if ( inputType === 'deleteContentBackward' || inputType === 'insertCompositionText' ) {
 		this.deleteContentBackwardSelectionState = new ve.SelectionState( this.nativeSelection );
 		setTimeout( function () {
-			surface.deleteContentBackwardSelectionState = null;
+			this.deleteContentBackwardSelectionState = null;
 		} );
 	}
 
