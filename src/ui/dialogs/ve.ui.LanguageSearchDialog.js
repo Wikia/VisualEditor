@@ -16,6 +16,7 @@
 ve.ui.LanguageSearchDialog = function VeUiLanguageSearchDialog( config ) {
 	// Parent constructor
 	ve.ui.LanguageSearchDialog.super.call( this, config );
+	this.$element.addClass( 've-ui-languageSearchDialog' );
 };
 
 /* Inheritance */

@@ -16,6 +16,7 @@
 ve.ui.LanguageInspector = function VeUiLanguageInspector() {
 	// Parent constructor
 	ve.ui.LanguageInspector.super.apply( this, arguments );
+	this.$element.addClass( 've-ui-languageInspector' );
 };
 
 /* Inheritance */
