@@ -52,7 +52,6 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	// if there has never had a non-collapsed selection, or if the cursor is moved out of
 	// the surface and a selection is made elsewhere.
 	this.lastNonCollapsedDocumentSelection = new ve.dm.NullSelection();
-	this.deleteContentBackwardSelectionState = null;
 	this.renderLocks = 0;
 	this.dragging = false;
 	this.relocatingSelection = null;
@@ -2078,14 +2077,6 @@ ve.ce.Surface.prototype.cleanupUnicorns = function ( fixupCursor ) {
  * @fires ve.ce.Surface#keyup
  */
 ve.ce.Surface.prototype.onDocumentKeyUp = function () {
-	if ( this.deleteContentBackwardSelectionState ) {
-		var range = this.deleteContentBackwardSelectionState.getNativeRange(
-			this.getElementDocument()
-		);
-		this.nativeSelection.removeAllRanges();
-		this.nativeSelection.addRange( range );
-		this.deleteContentBackwardSelectionState = null;
-	}
 	this.emit( 'keyup' );
 };
 
@@ -2283,19 +2274,7 @@ ve.ce.Surface.prototype.selectAll = function () {
  */
 ve.ce.Surface.prototype.onDocumentBeforeInput = function ( e ) {
 	if ( this.getSelection().isNativeCursor() ) {
-		var surface = this,
-			inputType = e.originalEvent ? e.originalEvent.inputType : null;
-
-		var selectionState = new ve.SelectionState( this.nativeSelection );
-
-		// Fixes issue with deleting Carriage Return in Android with GBoard
-		if ( inputType === 'deleteContentBackward' &&
-			selectionState.anchorOffset === 1 &&
-			selectionState.focusOffset === 0
-		) {
-			this.surfaceObserver.pollOnce();
-			ve.ce.keyDownHandlerFactory.lookup( 'linearDelete' ).static.execute( this, e );
-		}
+		const inputType = e.originalEvent ? e.originalEvent.inputType : null;
 
 		// Support: Chrome (Android, Gboard)
 		// Handle IMEs that emit text fragments with a trailing newline on Enter keypress (T312558)
@@ -2381,13 +2360,6 @@ ve.ce.Surface.prototype.fixupChromiumNativeEnter = function () {
 ve.ce.Surface.prototype.onDocumentInput = function ( e ) {
 	// Synthetic events don't have the originalEvent property (T176104)
 	const inputType = e.originalEvent ? e.originalEvent.inputType : null;
-
-	if ( inputType === 'deleteContentBackward' || inputType === 'insertCompositionText' ) {
-		this.deleteContentBackwardSelectionState = new ve.SelectionState( this.nativeSelection );
-		setTimeout( function () {
-			this.deleteContentBackwardSelectionState = null;
-		} );
-	}
 
 	// Special handling of NBSP insertions. T53045
 	// NBSPs are converted to normal spaces in ve.ce.TextState as they can be
