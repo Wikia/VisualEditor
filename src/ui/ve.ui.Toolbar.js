@@ -118,7 +118,9 @@ ve.ui.Toolbar.prototype.setup = function ( groups, surface ) {
 		opening: 'onInspectorOrDialogOpeningOrClosing',
 		closing: 'onInspectorOrDialogOpeningOrClosing'
 	} );
-	this.getSurface().getToolbarDialogs().connect( this, {
+	// FANDOM Change - for some reason by default the function returns only toolbar dialogs with position 'side'
+	// while all of toolbar dialogs have default position 'above'
+	this.getSurface().getToolbarDialogs('above').connect( this, {
 		opening: 'onInspectorOrDialogOpeningOrClosing',
 		closing: 'onInspectorOrDialogOpeningOrClosing'
 	} );
@@ -213,7 +215,9 @@ ve.ui.Toolbar.prototype.updateToolState = function () {
 	const activeDialogs = [
 		this.surface.getDialogs(),
 		this.surface.getContext().getInspectors(),
-		this.surface.getToolbarDialogs()
+		// FANDOM Change - for some reason by default the function returns only toolbar dialogs with position 'side'
+		// while all of toolbar dialogs have default position 'above'
+		this.surface.getToolbarDialogs('above')
 	].map( ( windowManager ) => {
 		if ( windowManager.getCurrentWindow() ) {
 			return windowManager.getCurrentWindow().constructor.static.name;
