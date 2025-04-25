@@ -781,8 +781,8 @@ ve.dm.Converter.prototype.getDataFromDomSubtree = function ( domElement, wrapper
 			// Sometimes the Table of Contents doesn't have "about" attribute. Include it anyway since it's not visible
 			// in the visual mode
 			if (
-				( node.nodeType === Node.ELEMENT_NODE && node.getAttribute( 'about' ) === about ) ||
-				( node.getAttribute('property') === 'mw:PageProp/toc' && !node.getAttribute( 'about ') )
+				node.nodeType === Node.ELEMENT_NODE &&
+				( node.getAttribute( 'about' ) === about || ( !node.getAttribute( 'about ') && node.getAttribute('property') === 'mw:PageProp/toc' ) )
 			) {
 				group.push( node );
 			} else {
